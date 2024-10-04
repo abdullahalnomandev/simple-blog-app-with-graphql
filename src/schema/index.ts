@@ -7,14 +7,11 @@ type Query {
 }
 
 type Mutation {
- signup( name: String, email: String,password: String, bio:String) : AuthPayload,
- signIn(email: String!, password:String!):AuthPayload 
+ signup( name: String!, email: String!, password: String!, bio:String) : AuthPayload,
+ signIn(email: String!, password:String!):AuthPayload,
+ addPost (title: String!, content: String!) : PostPayload
 }
 
- type AuthPayload {
-  userError: String
-  token: String
- }
 type Post {
   id: ID!
   title: String!
@@ -36,5 +33,15 @@ type Profile {
  id: ID!
  user: User!
  bio: String
+}
+
+type AuthPayload {
+  userError: String
+  token: String
+}
+ 
+type PostPayload {
+  post: Post
+  usererror: String
 }
 `;

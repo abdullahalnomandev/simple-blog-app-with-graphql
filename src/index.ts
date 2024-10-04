@@ -4,9 +4,11 @@ import { typeDefs } from './schema';
 import { resolvers } from './resolvers';
 import { Prisma, PrismaClient } from "@prisma/client";
 import { DefaultArgs } from '@prisma/client/runtime/library';
+import { jwtHelper } from './utils/jwtHelper';
 
 interface IContext {
-    prisma: PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>
+    prisma: PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+    userId: number | null;
 }
 const prisma = new PrismaClient();
 const server = new ApolloServer({
@@ -17,9 +19,11 @@ const server = new ApolloServer({
 const startServer = async () => {
     const { url } = await startStandaloneServer(server, {
         listen: { port: 4000 },
-        context: async (): Promise<IContext> => {
+        context: async ({req}): Promise<IContext> => {
+            const userId = await jwtHelper.getUserInfoFromToken(req.headers.authorization as string) as number;
             return {
-                prisma
+                prisma,
+                userId
             };
         }
     });
